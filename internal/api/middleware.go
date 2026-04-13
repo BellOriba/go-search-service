@@ -40,7 +40,6 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 			"path", r.URL.Path,
 			"request_id", requestID,
 			"duration", time.Since(start),
-			)
+		)
 	})
 }
-
