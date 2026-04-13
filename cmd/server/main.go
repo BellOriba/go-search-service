@@ -32,9 +32,14 @@ func main() {
 
 	productRepo := products.NewPostgresRepository(dbPool)
 
+	meiliClient := database.NewMeilisearchClient()
+	searchRepo := products.NewMeilisearchRepository(meiliClient)
+
+	productService := products.NewProductService(productRepo, searchRepo)
+
 	srv := &http.Server{
 		Addr:         ":8000",
-		Handler:      api.Handler(productRepo),
+		Handler:      api.Handler(productService),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

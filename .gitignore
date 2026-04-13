@@ -30,6 +30,8 @@ go.work.sum
 .env
 *.local
 
+docker-compose.override.yml
+
 .data/
 # Editor/IDE
 # .idea/

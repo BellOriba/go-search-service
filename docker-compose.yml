@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
+      - ENV=${APP_ENV:-production}
+      - MEILI_HOST=${MEILI_HOST}
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12
+    container_name: meilisearch
+    environment:
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-masterkey}
+      - MEILI_ENV=production
+
+volumes:
+  pgdata:
+  meili_data:
+

@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func Handler(repo products.Repository) http.Handler {
+func Handler(service *products.ProductService) http.Handler {
 	r := chi.NewRouter()
 
 	r.Use(RequestIDMiddleware)
@@ -21,10 +21,9 @@ func Handler(repo products.Repository) http.Handler {
 	})
 
 	r.Route("/api/v1", func(r chi.Router) {
-		r.Post("/products", CreateProductHandler(repo))
+		r.Post("/products", CreateProductHandler(service))
+		r.Post("/products/sync", SyncProductsHandler(service))
 	})
 
 	return r
 }
-
-

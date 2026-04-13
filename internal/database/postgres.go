@@ -31,5 +31,5 @@ func NewPostgresPool(ctx context.Context) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
-	return  pool, nil
+	return pool, nil
 }

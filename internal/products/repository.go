@@ -9,6 +9,7 @@ import (
 
 type Repository interface {
 	Create(ctx context.Context, p *Product) error
+	GetAll(ctx context.Context) ([]*Product, error)
 	GetByID(ctx context.Context, id uuid.UUID) (*Product, error)
 	Update(ctx context.Context, p *Product) error
 	Delete(ctx context.Context, id uuid.UUID) error
@@ -59,6 +60,36 @@ func (r *PostgresRepository) Create(ctx context.Context, p *Product) error {
 	return tx.Commit(ctx)
 }
 
+func (r *PostgresRepository) GetAll(ctx context.Context) ([]*Product, error) {
+	const query = `
+		SELECT p.id, p.sku, p.name, p.slug, p.description, p.price, p.stock,
+			p.category_id, c.name as category_name, p.is_featured, p.created_at
+		FROM products p
+		JOIN categories c ON p.category_id = c.id
+	`
+
+	rows, err := r.pool.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var products []*Product
+	for rows.Next() {
+		p := &Product{}
+		err := rows.Scan(
+			&p.ID, &p.SKU, &p.Name, &p.Slug, &p.Description, &p.Price, &p.Stock,
+			&p.CategoryID, &p.CategoryName, &p.IsFeatured, &p.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, p)
+	}
+
+	return products, nil
+}
+
 func (r *PostgresRepository) GetByID(ctx context.Context, id uuid.UUID) (*Product, error) {
 	return nil, nil
 }
@@ -70,4 +101,3 @@ func (r *PostgresRepository) Update(ctx context.Context, p *Product) error {
 func (r *PostgresRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
-

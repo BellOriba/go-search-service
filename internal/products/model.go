@@ -7,18 +7,19 @@ import (
 )
 
 type Product struct {
-	ID          uuid.UUID      `json:"id" validate:"required"`
-	SKU         string         `json:"sku" validate:"required,alphanum,max=20"`
-	Name        string         `json:"name" validate:"required,min=3,max=100"`
-	Slug        string         `json:"slug" validate:"required,lowercase"`
-	Description string         `json:"description" validate:"max=1000"`
-	Price       int64          `json:"price" validate:"required,gt=0"`
-	Stock       int            `json:"stock" validate:"min=0"`
-	CategoryID  uuid.UUID      `json:"category_id" validate:"required"`
-	IsFeatured  bool           `json:"is_featured"`
-	Images      []ProductImage `json:"images" validate:"dive"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
+	ID           uuid.UUID      `json:"id" validate:"required"`
+	SKU          string         `json:"sku" validate:"required,alphanum,max=20"`
+	Name         string         `json:"name" validate:"required,min=3,max=100"`
+	Slug         string         `json:"slug" validate:"required,lowercase"`
+	Description  string         `json:"description" validate:"max=1000"`
+	Price        int64          `json:"price" validate:"required,gt=0"`
+	Stock        int            `json:"stock" validate:"min=0"`
+	CategoryID   uuid.UUID      `json:"category_id" validate:"required"`
+	CategoryName string         `json:"category_name"`
+	IsFeatured   bool           `json:"is_featured"`
+	Images       []ProductImage `json:"images" validate:"dive"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
 }
 
 type ProductImage struct {
@@ -41,8 +42,19 @@ type CreateProductRequest struct {
 }
 
 type UpdateProductImageRequest struct {
-	Path string `json:"path" validate:"required"`
-	Original string `json:"original_url" validate:"required,url"`
+	Path      string `json:"path" validate:"required"`
+	Original  string `json:"original_url" validate:"required,url"`
 	Thumbnail string `json:"thumbnail_url" validate:"required,url"`
 }
 
+type ProductIndex struct {
+	ID          string `json:"id"`
+	SKU         string `json:"sku"`
+	Name        string `json:"name"`
+	Slug        string `json:"slug"`
+	Description string `json:"description"`
+	Price       int64  `json:"price"`
+	Category    string `json:"category"`
+	IsFeatured  bool   `json:"is_featured"`
+	CreatedAt   int64  `json:"created_at"`
+}
