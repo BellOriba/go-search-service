@@ -33,13 +33,18 @@ func main() {
 	productRepo := products.NewPostgresRepository(dbPool)
 
 	meiliClient := database.NewMeilisearchClient()
+
+	if err := database.SetupMeilisearchIndex(meiliClient); err != nil {
+		slog.Error("failed to setup meilisearch indexes", "error", err)
+	}
+
 	searchRepo := products.NewMeilisearchRepository(meiliClient)
 
 	productService := products.NewProductService(productRepo, searchRepo)
 
 	srv := &http.Server{
 		Addr:         ":8000",
-		Handler:      api.Handler(productService),
+		Handler:      api.Handler(productService, productRepo),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

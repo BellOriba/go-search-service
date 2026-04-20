@@ -29,6 +29,16 @@ services:
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY:-masterkey}
       - MEILI_ENV=production
 
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
 volumes:
   pgdata:
   meili_data:
